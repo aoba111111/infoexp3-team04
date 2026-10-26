@@ -13,7 +13,7 @@ UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
 def init_db():
     with sqlite3.connect(DB_PATH) as conn:
-        # likes INTEGER DEFAULT 0 を追加しました
+        # 新しく status TEXT DEFAULT 'available' を追加しました
         conn.execute("""
             CREATE TABLE IF NOT EXISTS messages (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -21,7 +21,8 @@ def init_db():
                 price INTEGER NOT NULL,
                 photo_path TEXT NOT NULL,
                 created_at TEXT NOT NULL,
-                likes INTEGER DEFAULT 0
+                likes INTEGER DEFAULT 0,
+                status TEXT DEFAULT 'available'
             )
         """)
         conn.execute("""
@@ -75,20 +76,35 @@ def create_message():
     with sqlite3.connect(DB_PATH) as conn:
         cursor = conn.cursor()
         cursor.execute(
-            "INSERT INTO messages (name, price, photo_path, created_at, likes) VALUES (?, ?, ?, ?, 0)",
+            "INSERT INTO messages (name, price, photo_path, created_at, likes, status) VALUES (?, ?, ?, ?, 0, 'available')",
             (name, int(price), photo_path, created_at)
         )
         conn.commit()
 
     return jsonify({"message": "success"}), 201
 
-# 新しく追加：グッドボタンを押したときの処理
 @app.post("/api/messages/<int:message_id>/like")
 def like_message(message_id):
     with sqlite3.connect(DB_PATH) as conn:
         conn.execute("UPDATE messages SET likes = likes + 1 WHERE id = ?", (message_id,))
         conn.commit()
     return jsonify({"message": "liked"}), 200
+
+# 🌟追加1：購入申請をするAPI (ステータスを pending に更新)
+@app.post("/api/messages/<int:message_id>/buy_request")
+def buy_request(message_id):
+    with sqlite3.connect(DB_PATH) as conn:
+        conn.execute("UPDATE messages SET status = 'pending' WHERE id = ?", (message_id,))
+        conn.commit()
+    return jsonify({"message": "requested"}), 200
+
+# 🌟追加2：申請を許可してSold OutにするAPI (ステータスを sold に更新)
+@app.post("/api/messages/<int:message_id>/approve")
+def approve_request(message_id):
+    with sqlite3.connect(DB_PATH) as conn:
+        conn.execute("UPDATE messages SET status = 'sold' WHERE id = ?", (message_id,))
+        conn.commit()
+    return jsonify({"message": "approved"}), 200
 
 @app.post("/api/messages/<int:message_id>/comments")
 def create_comment(message_id):
