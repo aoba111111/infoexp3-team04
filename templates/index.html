@@ -1,1 +1,24 @@
-<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MiniBoard</title><link rel="stylesheet" href="/static/style.css"></head><body><main><h1>MiniBoard</h1><p>チームで育てる小さなWebアプリ</p><form id="form"><input id="name" maxlength="30" placeholder="Nickname" required><textarea id="message" maxlength="300" placeholder="Message" required></textarea><button>投稿</button></form><p id="status"></p><section id="messages"></section></main><script src="/static/app.js"></script></body></html>
+<!doctype html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>メルカリ</title> <!-- ここを変更しました -->
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <main>
+        <h1>メルカリ</h1> <!-- ここを変更しました -->
+        <p>写真と言い値を投稿</p>
+        <form id="form">
+            <input id="name" maxlength="30" placeholder="Nickname" required>
+            <input type="number" id="price" placeholder="言い値(円)" required>
+            <input type="file" id="photo" accept="image/*" required>
+            <button>投稿</button>
+        </form>
+        <p id="status"></p>
+        <section id="messages"></section>
+    </main>
+    <script src="/static/app.js"></script>
+</body>
+</html>
